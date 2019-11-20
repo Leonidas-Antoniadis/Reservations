@@ -1,0 +1,114 @@
+﻿@model PtixiakiReservations.Models.Shops
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    ViewData["Title"] = "Details";
+    var photopath = "~/images/" + (Model.imgUrl ?? "noimage.jpg");
+    var ViewBag = Model.Address + Model.City;
+}
+
+<h1>Details</h1>
+
+<div onload="initMap()">
+    <h4>Shops</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Address)
+        </dt>
+        <dd class="col-sm-10">
+           <p id="address2"> @Html.DisplayFor(model => model.Address)</p>
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.City)
+        </dt>
+        <dd class="col-sm-10">
+            <p id="address">@Html.DisplayFor(model => model.City)</p>
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PostalCode)
+        </dt>
+        <dd class="col-sm-10">
+            <p id="address3"> @Html.DisplayFor(model => model.PostalCode)</p>
+</dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Phone)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Phone)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.UserId)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.UserId)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.thesis)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.thesis)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.rating)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.rating)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.TimeOpen)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.TimeOpen)
+        </dd>
+        <dt class="col-sm-2">
+            <img class="card-img h-50  w-25" src=@photopath asp-append-version="true" />
+        </dt>
+    </dl>
+    <div id="map" style="width: 600px;height: 400px;border: 1px solid #333">
+    </div>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.ID">Edit</a> |
+    <a asp-controller="Reservations" asp-action="Create" asp-route-shopid="@Model.ID" asp-route-userId="@UserManager.GetUserId(User)">Reservation</a>
+    |<a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    <script>
+        var geocoder;
+        var map;
+        var address = document.getElementById("address").innerHTML + " "+ document.getElementById("address2").innerHTML +  " "+ document.getElementById("address3").innerHTML;
+        console.log(address);
+        function initMap() {
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 8,
+                center: { lat: -34.397, lng: 150.644 }
+            });
+          //  geocoder = new google.maps.Geocoder();
+          //  codeAddress(geocoder, map);
+        }
+
+        //need payment
+      /*  function codeAddress(geocoder, map) {
+            geocoder.geocode({ 'address': address }, function (results, status) {
+                if (status === 'OK') {
+                    map.setCenter(results[0].geometry.location);
+                    var marker = new google.maps.Marker({
+                        map: map,
+                        position: results[0].geometry.location
+                    });
+                } else {
+                    alert('Geocode was not successful for the following reason: ' + status);
+                }
+            });
+        } */
+    </script>
+}
