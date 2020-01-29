@@ -1,0 +1,120 @@
+﻿@model IEnumerable<PtixiakiReservations.Models.Table>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Seats</h1>
+
+<canvas id="c" width="600" height="600" style="border:1px solid #000000;"></canvas>
+
+<input type="submit" value="Reservetion" class="btn btn-primary" id="reservetion" />
+
+@section Scripts{
+    <script>
+        var canvas = new fabric.Canvas('c');
+        const qstr = window.location.search;
+        console.log(qstr);
+        const urlParams = new URLSearchParams(qstr);
+        const shopid = urlParams.get('shopid');
+        const date = urlParams.get('date');
+         const people = urlParams.get('people');
+
+        var selectedTable;
+
+        console.log(date);
+        console.log(people);
+
+        var moveHandler = function (evt) {
+            var selected = evt.target;
+
+            if (selectedTable != selected && selectedTable != null) {
+                selectedTable.item(0).set('fill', '#eef');
+            } 
+                selected.item(0).set('fill', 'red');
+            selectedTable = selected;    
+
+        };
+
+        canvas.on('object:selected', moveHandler);
+
+        $("document").ready(function () {
+            $.ajax(
+                {
+                    type: "get",
+                    url: '@Url.Action("get_data", "Table")',
+                    dataType: 'json',
+                    data: { "shopid": shopid, "date": date,"people": people},
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (data) {
+                        var obj = jQuery.parseJSON(JSON.stringify(data));
+
+                        for (var i = 0; i < obj.length;i++) {
+
+
+                           var rect = new fabric.Rect({
+                                width: 100,
+                                height: 100,
+                                fill: '#eef',
+                                scaleY: 0.5,
+                                originX: 'center',
+                                originY: 'center'
+
+                            });
+
+                            var str = obj[i].people + "";
+
+                            var text = new fabric.Text(str, {
+                                fontSize: 15,
+                                originX: 'center',
+                                originY: 'center',
+                                selectable: false
+                            });
+
+                             var group = new fabric.Group([rect, text], {
+                                left: obj[i].x,
+                                top: obj[i].y,
+                                subTargetCheck: true,
+                                 hasControls: false,
+                                 selectable: true,
+                                 lockMovementX: true, lockMovementY: true,
+                                id:obj[i].id,
+                                angle: 0
+                             });
+
+                           canvas.add(group);
+
+
+
+                        }
+
+                    },
+                    error: function (data) { alert("fail to save"); },
+                    accept: 'application/json'
+                })
+        });
+
+
+        $("#reservetion").click(function () {
+
+            var res = {};
+            res.people = people;
+            res.tableId = selectedTable.get("id");
+            res.date = date;
+
+            $.ajax(
+                {
+                    type: "post",
+                    url: '@Url.Action("MakeRes", "Reservations")',
+                    dataType: 'json',     
+                    data: res,
+                    success: function (data) { alert("saved"); },
+                    error: function (data) { alert("fail to save"); },
+                    accept: 'application/json'
+                })
+
+        });
+
+    </script>
+
+}

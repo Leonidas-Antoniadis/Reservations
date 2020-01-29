@@ -18,6 +18,8 @@ namespace PtixiakiReservations.Models.ViewModels
         public int thesis { get; set; }
         public double rating { get; set; }
         public string TimeOpen { get; set; }
+        public string UserId { get; set; }
+        public ApplicationUser ApplicationUser { get; set; }
         public IFormFile Photo { get; set; }
     }
 }

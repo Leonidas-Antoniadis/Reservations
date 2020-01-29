@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PtixiakiReservations.Data;
 using PtixiakiReservations.Models;
+using PtixiakiReservations.Models.ViewModels;
 
 namespace PtixiakiReservations.Controllers
 {
@@ -18,28 +19,36 @@ namespace PtixiakiReservations.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        public ReservationsController(ApplicationDbContext context, UserManager<ApplicationUser> _userManager)
+        private readonly UserManager<ApplicationUser> userManager;
+        private readonly RoleManager<ApplicationRole> roleManager;
+        public ReservationsController(ApplicationDbContext context, UserManager<ApplicationUser> _userManager,RoleManager<ApplicationRole> roleManager)
         {
             _context = context;
             userManager = _userManager;
+            this.roleManager = roleManager;
         }
 
-        // GET: Reservations
-        public async Task<IActionResult> Index2()
-        {
-            string a = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var applicationDbContext = _context.Reservations.Include(r => r.ApplicationUser).Include(r => r.shop).Where(f =>f.ApplicationUser.Id == userManager.GetUserId(HttpContext.User));
-            return View(await applicationDbContext.ToListAsync());
-        }
-        //the shop see reservation
+        // GET: Reservations        
         public async Task<IActionResult> Index()
         {
-            string a = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var applicationDbContext = _context.Reservations.Include(r => r.ApplicationUser).Include(r => r.shop).Where(f => f.shop.UserId == userManager.GetUserId(HttpContext.User));
-            return View(await applicationDbContext.ToListAsync());
-        }
+            var applicationDbContext = _context.Reservations.Include(r => r.ApplicationUser).Include(r => r.table).Where(f => f.ApplicationUser.Id == userManager.GetUserId(HttpContext.User));
 
-        // GET: Reservations1/Details/5
+            string id = userManager.GetUserId(HttpContext.User);
+            var user = await userManager.FindByIdAsync(id);          
+            var tmp1 = await userManager.GetRolesAsync(user);
+
+            if (tmp1.Contains("shop"))
+            {
+              //  applicationDbContext = _context.Reservations.Include(r => r.ApplicationUser).Include(r => r.table).Where(f => f.table.UserId == userManager.GetUserId(HttpContext.User));
+            }
+            return View();
+        }
+        public List<Reservations> getResTables(int shopid,DateTime date)
+        {
+            var resTable = _context.Reservations.Where(s => s.date == date);
+
+            return null; 
+        }
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -49,7 +58,7 @@ namespace PtixiakiReservations.Controllers
 
             var reservations = await _context.Reservations
                 .Include(r => r.ApplicationUser)
-                .Include(r => r.shop)
+                .Include(r => r.table)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (reservations == null)
             {
@@ -58,42 +67,43 @@ namespace PtixiakiReservations.Controllers
 
             return View(reservations);
         }
-        private readonly UserManager<ApplicationUser> userManager;
-        // GET: Reservations1/Create
-        public IActionResult Create(int? shopid,string? userId)
+       
+        public IActionResult Create(int? shopid)
         {
 
-            ViewData["userId"] = userManager.GetUserId(HttpContext.User);
-          if (ViewData["userId"].ToString() != userId)
-            {
-                return NotFound();
-            }
 
-            ViewData["userId"] = new SelectList(_context.Users, "Id", "Id");
-            ViewData["shopId"] = new SelectList(_context.Shops, "ID", "ID");   
-            
             return View();
         }
 
-        // POST: Reservations1/Create
+        // POST: Reservations/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,people,userId,shopId,date")] Reservations reservations)
+        public async Task<IActionResult> Create(int shopid)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(reservations);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["userId"] = new SelectList(_context.Users, "Id", "Id", reservations.userId);
-            ViewData["shopId"] = new SelectList(_context.Shops, "ID", "ID", reservations.shopId);
-            return View(reservations);
+            
+
+            return RedirectToAction("Index", "Table", new { shopid = shopid });
         }
 
-        // GET: Reservations1/Edit/5
+        public async Task<IActionResult> MakeRes(Reservations res)
+        {
+          
+                Reservations reservation = new Reservations
+                {
+                    people = res.people,
+                    date = res.date,
+                    tableId = res.tableId,
+                    userId = userManager.GetUserId(HttpContext.User)
+                };
+
+            _context.Add(reservation);
+            await _context.SaveChangesAsync();
+
+            return null;
+        }
+
+        // GET: Reservations/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -106,12 +116,11 @@ namespace PtixiakiReservations.Controllers
             {
                 return NotFound();
             }
-            ViewData["userId"] = new SelectList(_context.Users, "Id", "Id", reservations.userId);
-            ViewData["shopId"] = new SelectList(_context.Shops, "ID", "ID", reservations.shopId);
+            ViewData["userId"] = new SelectList(_context.Users, "Id", "Id", reservations.userId);        
             return View(reservations);
         }
 
-        // POST: Reservations1/Edit/5
+        // POST: Reservations/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -144,7 +153,7 @@ namespace PtixiakiReservations.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["userId"] = new SelectList(_context.Users, "Id", "Id", reservations.userId);
-            ViewData["shopId"] = new SelectList(_context.Shops, "ID", "ID", reservations.shopId);
+          //  ViewData["shopId"] = new SelectList(_context.Shops, "ID", "ID", reservations.shopId);
             return View(reservations);
         }
 
@@ -158,7 +167,7 @@ namespace PtixiakiReservations.Controllers
 
             var reservations = await _context.Reservations
                 .Include(r => r.ApplicationUser)
-                .Include(r => r.shop)
+               // .Include(r => r.shop)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (reservations == null)
             {

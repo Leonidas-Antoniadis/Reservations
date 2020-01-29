@@ -25,12 +25,16 @@ namespace PtixiakiReservations.Controllers
     }
 
         public IActionResult Index()
-        {
-            ViewData["userId"] = userManager.GetUserId(HttpContext.User);
+        {          
             return View();
         }
 
         public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        public IActionResult test()
         {
             return View();
         }

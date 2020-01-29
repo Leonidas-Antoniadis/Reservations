@@ -14,9 +14,11 @@ namespace PtixiakiReservations.Models
         public string userId { get; set; }
         [ForeignKey("userId")]
         public ApplicationUser ApplicationUser { get; set; }
-        public int shopId { get; set; }
-        [ForeignKey("shopId")]
-        public Shops shop { get; set; }
+
+        public int tableId { get; set; }
+        [ForeignKey("tableId")]
+        public Table table { get; set; }
+
         public DateTime date { get; set; }
     }
 }

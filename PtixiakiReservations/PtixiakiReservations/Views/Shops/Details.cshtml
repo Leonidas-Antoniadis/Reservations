@@ -1,6 +1,5 @@
 ﻿@model PtixiakiReservations.Models.Shops
 @using Microsoft.AspNetCore.Identity
-@inject UserManager<ApplicationUser> UserManager
 
 @{
     ViewData["Title"] = "Details";
@@ -24,32 +23,25 @@
             @Html.DisplayNameFor(model => model.Address)
         </dt>
         <dd class="col-sm-10">
-           <p id="address2"> @Html.DisplayFor(model => model.Address)</p>
+            @Html.DisplayFor(model => model.Address)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.City)
         </dt>
         <dd class="col-sm-10">
-            <p id="address">@Html.DisplayFor(model => model.City)</p>
+           @Html.DisplayFor(model => model.City)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.PostalCode)
         </dt>
         <dd class="col-sm-10">
-            <p id="address3"> @Html.DisplayFor(model => model.PostalCode)</p>
+             @Html.DisplayFor(model => model.PostalCode)
 </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Phone)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Phone)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.UserId)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.UserId)
-        </dd>
+            @Html.DisplayFor(model => model.Phone)      
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.thesis)
         </dt>
@@ -76,9 +68,8 @@
     </div>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.ID">Edit</a> |
-    <a asp-controller="Reservations" asp-action="Create" asp-route-shopid="@Model.ID" asp-route-userId="@UserManager.GetUserId(User)">Reservation</a>
-    |<a asp-action="Index">Back to List</a>
+    <a asp-controller="Reservations" asp-action="Create" asp-route-shopid="@Model.ID">Reservation</a>
+    <br><a asp-action="Index"  asp-route-id=@Html.DisplayFor(model =>model.City)>Back to List</a>
 </div>
 
 @section Scripts {

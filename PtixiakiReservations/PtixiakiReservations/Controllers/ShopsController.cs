@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -11,24 +13,33 @@ using PtixiakiReservations.Data;
 using PtixiakiReservations.Models;
 using PtixiakiReservations.Models.ViewModels;
 
+
 namespace PtixiakiReservations.Controllers
 {
+    
     public class ShopsController : Controller
     {
         private readonly ApplicationDbContext _context;
 
+       
+        private readonly UserManager<ApplicationUser> userManager;
+        private readonly RoleManager<ApplicationRole> roleManager;
+
         public IHostingEnvironment HostingEnviromnet;
 
+        
         public ShopsController(ApplicationDbContext context,
-                                IHostingEnvironment hostingEnviromnet)
+                                IHostingEnvironment hostingEnviromnet, UserManager<ApplicationUser> UserManager, RoleManager<ApplicationRole> roleManager)
         {
+            this.roleManager = roleManager;
+            this.userManager = UserManager;
             _context = context;
             HostingEnviromnet = hostingEnviromnet;
         }
 
         // GET: Shops
         public async Task<IActionResult> Index(string city)
-        {
+        {        
             var shops = from m in _context.Shops
                          select m;
 
@@ -41,15 +52,18 @@ namespace PtixiakiReservations.Controllers
         }
 
         // GET: Shops/Details/5
-        public async Task<IActionResult> Details(int? id)
+        [Authorize(Roles = "Shop")]
+        public async Task<IActionResult> Edit()
         {
-            if (id == null)
+            string tmp  = userManager.GetUserId(HttpContext.User);
+
+            if (tmp == null)
             {
                 return NotFound();
             }
 
-            var shops = await _context.Shops
-                .FirstOrDefaultAsync(m => m.ID == id);
+            var shops = _context.Shops.FirstOrDefault(s => s.UserId.Equals(tmp));                              
+            
             if (shops == null)
             {
                 return NotFound();
@@ -57,13 +71,14 @@ namespace PtixiakiReservations.Controllers
 
             return View(shops);
         }
+        
 
         // GET: Shops/Create
         public IActionResult Create()
         {
             return View();
         }
-
+        
         // POST: Shops/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -81,7 +96,20 @@ namespace PtixiakiReservations.Controllers
                     string filePath = Path.Combine(uploadsFolder, uniqueFileName);
                     model.Photo.CopyTo(new FileStream(filePath, FileMode.Create));
                 }
-                Shops newshop = new Shops
+
+                IdentityResult  result= null;
+                var role = await roleManager.FindByIdAsync("3");
+
+               string id = userManager.GetUserId(HttpContext.User);
+                var user = await userManager.FindByIdAsync(id);  
+                
+               
+                result = await userManager.AddToRoleAsync(user, role.Name);
+                if (!result.Succeeded)
+                {
+                   // return View("~/Views/Home/Index.cshtml");
+                }                           
+                 Shops newshop = new Shops
                 {
                     Name = model.Name,
                     Address = model.Address,
@@ -90,18 +118,20 @@ namespace PtixiakiReservations.Controllers
                     Phone = model.Phone,
                     rating = model.rating,
                     thesis = model.thesis,
-                    TimeOpen = model.TimeOpen,
+                    TimeOpen = model.TimeOpen,       
+                    UserId = userManager.GetUserId(HttpContext.User),
                     imgUrl = uniqueFileName
-                };
+                   
+                };                
                 _context.Add(newshop);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("details",new { id = newshop.ID });
             }
             return View(model);
         }
-
+       // [Authorize(Roles = "Shop")]
         // GET: Shops/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
@@ -109,6 +139,10 @@ namespace PtixiakiReservations.Controllers
             }
 
             var shops = await _context.Shops.FindAsync(id);
+            if (userManager.GetUserId(HttpContext.User) != shops.UserId)
+            {
+             //   return NotFound();
+            }
             if (shops == null)
             {
                 return NotFound();

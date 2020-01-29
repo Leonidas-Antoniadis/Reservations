@@ -1,6 +1,5 @@
 ﻿@model IEnumerable<PtixiakiReservations.Models.Shops>
 @using Microsoft.AspNetCore.Identity
-@inject UserManager<ApplicationUser> UserManager
 
 @{
     ViewData["Title"] = "Index";
@@ -43,11 +42,9 @@
 
                         </p>
                         <img class="card-img-top rounded" height="100" width="160" src=@photopath asp-append-version="true" />
-                        <p class="card-text">
-                            <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                            <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                            <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
-                            <a asp-controller="Reservations" asp-action="Create" asp-route-shopid="@item.ID" asp-route-userId="@UserManager.GetUserId(User)">Reservation</a>
+                        <p class="card-text">                        
+                            <a asp-action="Details" asp-route-id="@item.ID">Details</a>                           
+                           |<span></span> <a asp-controller="Reservations" asp-action="Create" asp-route-shopid="@item.ID">Reservation</a>
                         </p>
                     </div>
                 </div>
