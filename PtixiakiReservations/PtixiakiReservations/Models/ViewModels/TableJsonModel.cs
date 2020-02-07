@@ -10,5 +10,7 @@ namespace PtixiakiReservations.Models.ViewModels
         public int top { get; set; }
         public int left { get; set; }
         public string text { get; set; }
+
+        public string Name { get; set; }
     }
 }

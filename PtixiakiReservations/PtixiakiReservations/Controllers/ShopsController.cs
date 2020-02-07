@@ -127,7 +127,7 @@ namespace PtixiakiReservations.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction("details",new { id = newshop.ID });
             }
-            return View(model);
+            return RedirectToAction("CreateTableMap", "Table");
         }
        // [Authorize(Roles = "Shop")]
         // GET: Shops/Edit/5

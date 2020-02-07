@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -6,7 +9,7 @@
     <title>@ViewData["Title"] - PtixiakiReservations</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
-    
+
 </head>
 <body>
     <header>
@@ -26,6 +29,28 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+                        <li class="nav-item">
+                            @if (SignInManager.IsSignedIn(User))
+                            {
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Reservations" asp-action="index">My Reservations</a>
+                            }
+                            </li>
+                        @if (SignInManager.IsSignedIn(User) && User.IsInRole("Shop"))
+                        {
+                            <li class="nav-item">
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        My shop
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                                        <button class="dropdown-item" type="button"><a class="nav-link text-dark" asp-controller="Shops" asp-action="Create">Create Shop</a></button>
+                                        <button class="dropdown-item" type="button"><a class="nav-link text-dark" asp-controller="Shops" asp-action="Edit">Edit Shop</a></button>
+                                        <button class="dropdown-item" type="button"><a class="nav-link text-dark" asp-controller="Table" asp-action="Create">Create a Table Map</a></button>
+                                        <button class="dropdown-item" type="button"><a class="nav-link text-dark" asp-controller="Table" asp-action="ListOfMytables">List Of My Tables</a></button>
+                                    </div>
+                                </div>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>

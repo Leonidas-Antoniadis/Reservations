@@ -38,27 +38,21 @@ namespace PtixiakiReservations.Controllers
         public JsonResult get_data(int? shopid, DateTime? date, int? people)
         {
 
-            var applicationDbContext = _context.Table.Where(s => s.shopID == shopid).ToList();
+            var tables = _context.Table.Where(s => s.shopID == shopid).ToList();
+         
 
-            List<Reservations> resTable = new List<Reservations>();
+                return Json(tables);
+        }     
+            public async Task<IActionResult> ListOfMytables()
+        {
+            var id = userManager.GetUserId(HttpContext.User);
 
-            foreach (var table in applicationDbContext)
-            {
-                var tmp = _context.Reservations.SingleOrDefault(t => t.tableId == table.ID);
-                if (tmp != null)
-                {
-                    resTable.Add(tmp);
-                }
-                TimeSpan span = TimeSpan.FromHours(2);
+            var tables =  _context.Table.Where(s => s.shop.UserId == id).Include(r => r.shop);
 
-                var resTable2 = resTable.Where(s => s.date.Subtract((DateTime)date) <= span).ToList();
-               
-            }
-            return Json(applicationDbContext);
+            return View( await tables.ToListAsync());
         }
-
-        // GET: Table/Details/5
-        public async Task<IActionResult> Details(int? id)
+            // GET: Table/Details/5
+            public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
@@ -79,13 +73,12 @@ namespace PtixiakiReservations.Controllers
         // GET: Table/Create
         public IActionResult Create()
         {
-            ViewData["ReservationId"] = new SelectList(_context.Reservations, "ID", "ID");
-            ViewData["shopID"] = new SelectList(_context.Shops, "ID", "ID");
-            return View();
+
+            return View("CreateTableMap");
         }
         // POST: Table/Create
         [HttpPost]
-        public async Task<IActionResult> Test2([FromBody] TableJsonModel[] test2)
+        public async Task<IActionResult> CreateTableMap([FromBody] TableJsonModel[] tables)
         {
 
            var userID = userManager.GetUserId(HttpContext.User);
@@ -99,14 +92,16 @@ namespace PtixiakiReservations.Controllers
             else
             if (ModelState.IsValid)
             {
-                foreach (var t in test2)
+                foreach (var t in tables)
                 {
                     Table table = new Table
                     {
+                        Name = t.Name,
                         people = int.Parse(t.text),
                         x = t.left,
                         y = t.top,
                         shopID = shop.ID
+                        
                     };
                     _context.Add(table);
 
@@ -115,7 +110,7 @@ namespace PtixiakiReservations.Controllers
                 await _context.SaveChangesAsync();
             }
             Response.StatusCode = (int)HttpStatusCode.OK;
-            return null; 
+            return Json(Response.StatusCode); 
         }
        
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 

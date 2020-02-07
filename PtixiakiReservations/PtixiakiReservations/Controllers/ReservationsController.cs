@@ -37,18 +37,35 @@ namespace PtixiakiReservations.Controllers
             var user = await userManager.FindByIdAsync(id);          
             var tmp1 = await userManager.GetRolesAsync(user);
 
-            if (tmp1.Contains("shop"))
+            if (tmp1.Contains("Shop"))
             {
-              //  applicationDbContext = _context.Reservations.Include(r => r.ApplicationUser).Include(r => r.table).Where(f => f.table.UserId == userManager.GetUserId(HttpContext.User));
+                applicationDbContext = _context.Reservations.Include(r => r.ApplicationUser).Include(r => r.table).Where(f => f.table.shop.UserId == userManager.GetUserId(HttpContext.User));
             }
-            return View();
+            return View(applicationDbContext);
         }
-        public List<Reservations> getResTables(int shopid,DateTime date)
+        public JsonResult isFree(int? shopid, DateTime? date,int? people)
         {
-            var resTable = _context.Reservations.Where(s => s.date == date);
+            var tables = _context.Table.Where(s => s.shopID == shopid).ToList();
 
-            return null; 
-        }
+            List<Reservations> resTable = new List<Reservations>();
+            TimeSpan span = TimeSpan.FromHours(2);
+            TimeSpan span2 = TimeSpan.FromHours(-2);
+            var reservations = _context.Reservations.ToList();
+            reservations= reservations.Where(res => res.date.Subtract((DateTime)date) <= span && res.date.Subtract((DateTime)date) >= span2).ToList();
+            if (reservations != null)
+            {
+                foreach (var table in tables)
+                {
+                    var tmp = reservations.FirstOrDefault(res => res.tableId == table.ID);
+                    if (tmp != null)
+                    {
+                        resTable.Add(tmp);
+                    }
+                }
+            }          
+
+            return Json(resTable);
+        }    
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -59,6 +76,7 @@ namespace PtixiakiReservations.Controllers
             var reservations = await _context.Reservations
                 .Include(r => r.ApplicationUser)
                 .Include(r => r.table)
+                .Include(r => r.table.shop)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (reservations == null)
             {
@@ -100,7 +118,7 @@ namespace PtixiakiReservations.Controllers
             _context.Add(reservation);
             await _context.SaveChangesAsync();
 
-            return null;
+            return Json(reservation); 
         }
 
         // GET: Reservations/Edit/5

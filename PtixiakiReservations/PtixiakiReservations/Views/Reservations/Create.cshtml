@@ -9,19 +9,12 @@
 <h4>Reservations</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">      
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="people" class="control-label"></label>
-                <input asp-for="people" class="form-control" id="people"/>
-                <span asp-validation-for="people" class="text-danger"></span>
-            </div>
+    <div class="col-md-4">
 
-            <div class="form-group">
-                <label asp-for="date" class="control-label"></label>
-                <input asp-for="date" class="form-control" id="date"/>
-                <span asp-validation-for="date" class="text-danger"></span>
-            </div>
+        <input asp-for="people" class="form-control" id="people" />
+        <span asp-validation-for="people" class="text-danger"></span>
+        <input asp-for="date" class="form-control" id="date" />
+        <span asp-validation-for="date" class="text-danger"></span>
     </div>
 </div>
 
@@ -33,14 +26,16 @@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 <script>
     const qstr = window.location.search;
-    console.log(qstr);
+    console.log(new Date($.now()));
     const urlParams = new URLSearchParams(qstr);
     const shopid = urlParams.get('shopid');
+
     $("#goto").click(function () {
-        if ( $("#date").val() == null || $("#people").val() == null) {
+        if ($("#date").val() == 0 || $("#people").val() == 0) {
             alert("put date and people");
         } else {
-            window.location.replace("https://localhost:44316/table/index?shopid=" + shopid + "&date=" + $("#date").val() + "&people=" + $("#people").val())
+            var url = "/table/index?shopid=" + shopid + "&date=" + $("#date").val() + "&people=" + $("#people").val();
+            window.location.href = url;
         }
 
         });

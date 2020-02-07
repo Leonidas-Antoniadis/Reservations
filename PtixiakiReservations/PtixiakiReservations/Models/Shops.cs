@@ -14,6 +14,7 @@ namespace PtixiakiReservations.Models
         public string City { get; set; }
         public string PostalCode { get; set; }
         public string Phone { get; set; }
+    
         public string UserId { get; set; }
         [ForeignKey("UserId")]
         public ApplicationUser ApplicationUser { get; set; }

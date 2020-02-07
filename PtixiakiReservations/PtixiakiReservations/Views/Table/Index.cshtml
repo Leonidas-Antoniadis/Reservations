@@ -8,13 +8,13 @@
 
 <canvas id="c" width="600" height="600" style="border:1px solid #000000;"></canvas>
 
-<input type="submit" value="Reservetion" class="btn btn-primary" id="reservetion" />
+<input type="submit" value="Reservation" class="btn btn-primary" id="reservetion" />
 
 @section Scripts{
     <script>
         var canvas = new fabric.Canvas('c');
         const qstr = window.location.search;
-        console.log(qstr);
+
         const urlParams = new URLSearchParams(qstr);
         const shopid = urlParams.get('shopid');
         const date = urlParams.get('date');
@@ -22,47 +22,62 @@
 
         var selectedTable;
 
-        console.log(date);
-        console.log(people);
-
         var moveHandler = function (evt) {
             var selected = evt.target;
 
             if (selectedTable != selected && selectedTable != null) {
                 selectedTable.item(0).set('fill', '#eef');
-            } 
-                selected.item(0).set('fill', 'red');
-            selectedTable = selected;    
+            }
+            if (selected.item(1).get("text") < people) {
+                alert("You need a table for more people");
+            } else if (selected.item(0).get("fill") == "red") {
+                alert("Already Taken");
+            } else {
+                selected.item(0).set('fill', 'green');
+                selectedTable = selected;
+            }
 
         };
-
         canvas.on('object:selected', moveHandler);
 
-        $("document").ready(function () {
+        $("document").ready(function () {         
             $.ajax(
                 {
                     type: "get",
                     url: '@Url.Action("get_data", "Table")',
                     dataType: 'json',
-                    data: { "shopid": shopid, "date": date,"people": people},
+                    data: { "shopid": shopid, "date": date, "people": people },
                     contentType: 'application/json; charset=utf-8',
                     success: function (data) {
-                        var obj = jQuery.parseJSON(JSON.stringify(data));
+                       var tables = jQuery.parseJSON(JSON.stringify(data));
+                        console.log("table= ");
+                        console.log(tables);
+                        for (var i = 0; i < tables.length; i++) {
+                            //   console.log(res[0].tableId);                           
+                            if (5 == tables[i].id) {
 
-                        for (var i = 0; i < obj.length;i++) {
+                                var rect = new fabric.Rect({
+                                    width: 100,
+                                    height: 100,
+                                    fill: 'red',
+                                    scaleY: 0.5,
+                                    originX: 'center',
+                                    originY: 'center'
 
+                                });
 
-                           var rect = new fabric.Rect({
-                                width: 100,
-                                height: 100,
-                                fill: '#eef',
-                                scaleY: 0.5,
-                                originX: 'center',
-                                originY: 'center'
+                            } else {
+                                var rect = new fabric.Rect({
+                                    width: 100,
+                                    height: 100,
+                                    fill: '#eef',
+                                    scaleY: 0.5,
+                                    originX: 'center',
+                                    originY: 'center'
 
-                            });
-
-                            var str = obj[i].people + "";
+                                });
+                            }
+                            var str = tables[i].people + "";
 
                             var text = new fabric.Text(str, {
                                 fontSize: 15,
@@ -71,18 +86,18 @@
                                 selectable: false
                             });
 
-                             var group = new fabric.Group([rect, text], {
-                                left: obj[i].x,
-                                top: obj[i].y,
+                            var group = new fabric.Group([rect, text], {
+                                left: tables[i].x,
+                                top: tables[i].y,
                                 subTargetCheck: true,
-                                 hasControls: false,
-                                 selectable: true,
-                                 lockMovementX: true, lockMovementY: true,
-                                id:obj[i].id,
+                                hasControls: false,
+                                selectable: true,
+                                lockMovementX: true, lockMovementY: true,
+                                id: tables[i].id,
                                 angle: 0
-                             });
+                            });
 
-                           canvas.add(group);
+                            canvas.add(group);
 
 
 
@@ -91,7 +106,33 @@
                     },
                     error: function (data) { alert("fail to save"); },
                     accept: 'application/json'
-                })
+                });$.ajax(
+                {
+                    type: "get",
+                    url: '@Url.Action("isFree", "Reservations")',
+                    dataType: 'json',
+                    data: { "shopid": shopid, "date": date, "people": people },
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (data) {
+                      var  res = jQuery.parseJSON(JSON.stringify(data));
+                        console.log("res= ");
+                        console.log(res);
+                        var canvasObjects = canvas.getObjects();
+                        for (obj in canvasObjects) {
+                            if (canvasObjects[obj].get('type') == 'group') {                              
+                                for (var i = 0; i < res.length; i++) {
+                                    if (canvasObjects[obj].get('id') == res[i].tableId) {
+                                        console.log("win");
+                                        canvasObjects[obj].item(0).set('fill', 'red');
+                                    }                         
+                                }
+                            }
+                        }
+                    },
+                    error: function (data) { alert("fail to save"); },
+                    accept: 'application/json'
+                });
+       
         });
 
 
@@ -108,7 +149,11 @@
                     url: '@Url.Action("MakeRes", "Reservations")',
                     dataType: 'json',     
                     data: res,
-                    success: function (data) { alert("saved"); },
+                    success: function (data) {
+                    var  res = jQuery.parseJSON(JSON.stringify(data));                 
+                        var url = "/Reservations/Details?ID=" + res.id; 
+                        window.location.href = url;
+                    },
                     error: function (data) { alert("fail to save"); },
                     accept: 'application/json'
                 })

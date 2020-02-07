@@ -179,8 +179,6 @@ C:\Users\leonidas\source\repos\PtixiakiReservations\PtixiakiReservations\obj\Deb
 C:\Users\leonidas\source\repos\PtixiakiReservations\PtixiakiReservations\obj\Debug\netcoreapp3.0\Razor\Areas\Identity\Pages\Account\ResetPassword.cshtml.g.cs
 C:\Users\leonidas\source\repos\PtixiakiReservations\PtixiakiReservations\obj\Debug\netcoreapp3.0\Razor\Areas\Identity\Pages\Account\ResetPasswordConfirmation.cshtml.g.cs
 C:\Users\leonidas\source\repos\PtixiakiReservations\PtixiakiReservations\obj\Debug\netcoreapp3.0\Razor\Areas\Identity\Pages\Account\_StatusMessage.cshtml.g.cs
-C:\Users\leonidas\source\repos\PtixiakiReservations\PtixiakiReservations\obj\Debug\netcoreapp3.0\Razor\Views\Home\test.cshtml.g.cs
-C:\Users\leonidas\source\repos\PtixiakiReservations\PtixiakiReservations\obj\Debug\netcoreapp3.0\Razor\Views\Table\Create.cshtml.g.cs
 C:\Users\leonidas\source\repos\PtixiakiReservations\PtixiakiReservations\obj\Debug\netcoreapp3.0\Razor\Views\Table\Delete.cshtml.g.cs
 C:\Users\leonidas\source\repos\PtixiakiReservations\PtixiakiReservations\obj\Debug\netcoreapp3.0\Razor\Views\Table\Edit.cshtml.g.cs
 C:\Users\leonidas\source\repos\PtixiakiReservations\PtixiakiReservations\obj\Debug\netcoreapp3.0\Razor\Views\Table\Index.cshtml.g.cs
@@ -189,3 +187,5 @@ C:\Users\leonidas\source\repos\PtixiakiReservations\PtixiakiReservations\bin\Deb
 C:\Users\leonidas\source\repos\PtixiakiReservations\PtixiakiReservations\bin\Debug\netcoreapp3.0\System.Text.Json.dll
 C:\Users\leonidas\source\repos\PtixiakiReservations\PtixiakiReservations\obj\Debug\netcoreapp3.0\PtixiakiReservations.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\leonidas\source\repos\PtixiakiReservations\PtixiakiReservations\obj\Debug\netcoreapp3.0\PtixiakiReservations.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\leonidas\source\repos\PtixiakiReservations\PtixiakiReservations\obj\Debug\netcoreapp3.0\Razor\Views\Table\CreateTableMap.cshtml.g.cs
+C:\Users\leonidas\source\repos\PtixiakiReservations\PtixiakiReservations\obj\Debug\netcoreapp3.0\Razor\Views\Table\ListOfMYTables.cshtml.g.cs
