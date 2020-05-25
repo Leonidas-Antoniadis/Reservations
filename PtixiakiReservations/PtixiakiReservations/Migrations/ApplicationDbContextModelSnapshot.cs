@@ -211,9 +211,6 @@ namespace PtixiakiReservations.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Tipos")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
@@ -234,37 +231,190 @@ namespace PtixiakiReservations.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("PtixiakiReservations.Models.Reservations", b =>
+            modelBuilder.Entity("PtixiakiReservations.Models.City", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("City");
+                });
+
+            modelBuilder.Entity("PtixiakiReservations.Models.Event", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("EndTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("EventTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FamilyEventId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("VenueId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventTypeId");
+
+                    b.HasIndex("FamilyEventId");
+
+                    b.HasIndex("VenueId");
+
+                    b.ToTable("Event");
+                });
+
+            modelBuilder.Entity("PtixiakiReservations.Models.EventType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EventType");
+                });
+
+            modelBuilder.Entity("PtixiakiReservations.Models.FamilyEvent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FamilyEvent");
+                });
+
+            modelBuilder.Entity("PtixiakiReservations.Models.Reservation", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("date")
+                    b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("people")
+                    b.Property<TimeSpan>("Duration")
+                        .HasColumnType("time");
+
+                    b.Property<int>("EventId")
                         .HasColumnType("int");
 
-                    b.Property<int>("tableId")
+                    b.Property<int>("SeatId")
                         .HasColumnType("int");
 
-                    b.Property<string>("userId")
+                    b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("ID");
 
-                    b.HasIndex("tableId");
+                    b.HasIndex("EventId");
 
-                    b.HasIndex("userId");
+                    b.HasIndex("SeatId");
 
-                    b.ToTable("Reservations");
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Reservation");
                 });
 
-            modelBuilder.Entity("PtixiakiReservations.Models.Shops", b =>
+            modelBuilder.Entity("PtixiakiReservations.Models.Seat", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Available")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SubAreaId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("X")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("Y")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SubAreaId");
+
+                    b.ToTable("Seat");
+                });
+
+            modelBuilder.Entity("PtixiakiReservations.Models.SubArea", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("AreaName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Desc")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Height")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("Left")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("Rotate")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("Top")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("VenueId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Width")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VenueId");
+
+                    b.ToTable("SubArea");
+                });
+
+            modelBuilder.Entity("PtixiakiReservations.Models.Venue", b =>
+                {
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -272,8 +422,8 @@ namespace PtixiakiReservations.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("City")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("CityId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -284,55 +434,19 @@ namespace PtixiakiReservations.Migrations
                     b.Property<string>("PostalCode")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("TimeOpen")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("imgUrl")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("rating")
-                        .HasColumnType("float");
+                    b.HasKey("Id");
 
-                    b.Property<int>("thesis")
-                        .HasColumnType("int");
-
-                    b.HasKey("ID");
+                    b.HasIndex("CityId");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Shops");
-                });
-
-            modelBuilder.Entity("PtixiakiReservations.Models.Table", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("people")
-                        .HasColumnType("int");
-
-                    b.Property<int>("shopID")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("x")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("y")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("shopID");
-
-                    b.ToTable("Table");
+                    b.ToTable("Venue");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -386,35 +500,77 @@ namespace PtixiakiReservations.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("PtixiakiReservations.Models.Reservations", b =>
+            modelBuilder.Entity("PtixiakiReservations.Models.Event", b =>
                 {
-                    b.HasOne("PtixiakiReservations.Models.Table", "table")
+                    b.HasOne("PtixiakiReservations.Models.EventType", "EventType")
                         .WithMany()
-                        .HasForeignKey("tableId")
+                        .HasForeignKey("EventTypeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PtixiakiReservations.Models.ApplicationUser", "ApplicationUser")
+                    b.HasOne("PtixiakiReservations.Models.FamilyEvent", "FamilyEvent")
                         .WithMany()
-                        .HasForeignKey("userId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("FamilyEventId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PtixiakiReservations.Models.Venue", "Venue")
+                        .WithMany()
+                        .HasForeignKey("VenueId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
-            modelBuilder.Entity("PtixiakiReservations.Models.Shops", b =>
+            modelBuilder.Entity("PtixiakiReservations.Models.Reservation", b =>
                 {
+                    b.HasOne("PtixiakiReservations.Models.Event", "Event")
+                        .WithMany()
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PtixiakiReservations.Models.Seat", "Seat")
+                        .WithMany()
+                        .HasForeignKey("SeatId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("PtixiakiReservations.Models.ApplicationUser", "ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
-            modelBuilder.Entity("PtixiakiReservations.Models.Table", b =>
+            modelBuilder.Entity("PtixiakiReservations.Models.Seat", b =>
                 {
-                    b.HasOne("PtixiakiReservations.Models.Shops", "shop")
+                    b.HasOne("PtixiakiReservations.Models.SubArea", "SubArea")
                         .WithMany()
-                        .HasForeignKey("shopID")
+                        .HasForeignKey("SubAreaId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("PtixiakiReservations.Models.SubArea", b =>
+                {
+                    b.HasOne("PtixiakiReservations.Models.Venue", "Venue")
+                        .WithMany()
+                        .HasForeignKey("VenueId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PtixiakiReservations.Models.Venue", b =>
+                {
+                    b.HasOne("PtixiakiReservations.Models.City", "City")
+                        .WithMany()
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PtixiakiReservations.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 #pragma warning restore 612, 618
         }

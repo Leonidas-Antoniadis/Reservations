@@ -89,11 +89,8 @@ namespace PtixiakiReservations.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser { UserName = Input.Email, Email = Input.Email, FirstName = Input.FirstName, LastName = Input.LastName };
-                await _userManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
-            //    user.UserName = Input.FirstName + " " + Input.LastName;              
-                var result = await _userManager.CreateAsync(user, Input.Password);
-                user.UserName = Input.FirstName + "" + Input.LastName;
-                user.NormalizedUserName = user.Email;
+                await _userManager.SetPhoneNumberAsync(user, Input.PhoneNumber);             
+                var result = await _userManager.CreateAsync(user, Input.Password);              
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");

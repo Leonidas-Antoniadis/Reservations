@@ -15,17 +15,23 @@ namespace PtixiakiReservations.Data
           : base(options)
         {
         }
-        public DbSet<Shops> Shops { get; set; }
+        public DbSet<Venue> Venue { get; set; }
+        public DbSet<Reservation> Reservation { get; set; }
+        public DbSet<SubArea> SubArea { get; set; }
+        public DbSet<Event> Event { get; set; }
+        public DbSet<FamilyEvent> FamilyEvent { get; set; }
+        public DbSet<Seat> Seat { get; set; }
 
-        public DbSet<Reservations> Reservations { get; set; }
+        public DbSet<City> City { get; set; }
 
-        public DbSet<Table> Table { get; set; }
+        public DbSet<EventType> EventType { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelbuilder)
         {
             foreach (var relationship in modelbuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
             {
                 relationship.DeleteBehavior = DeleteBehavior.Restrict;
-            }
+            }          
 
             base.OnModelCreating(modelbuilder);
         }

@@ -6,38 +6,48 @@
 
 <h1>Create</h1>
 
-<h4>Reservations</h4>
+<h4>Reservation</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-
         <input asp-for="people" class="form-control" id="people" />
         <span asp-validation-for="people" class="text-danger"></span>
         <input asp-for="date" class="form-control" id="date" />
-        <span asp-validation-for="date" class="text-danger"></span>
     </div>
 </div>
 
 <div>
-        <input type="submit" value="Go to Tables" class="btn btn-primary" id="goto" />
+    <input type="submit" value="Go to Tables" class="btn btn-primary" id="goto" />
 </div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 <script>
+
+    $("document").ready(function () {
+        var myDate = new Date();
+        $("#date").val(myDate.toJSON().slice(0,19));
+       
+    });
+
     const qstr = window.location.search;
     console.log(new Date($.now()));
     const urlParams = new URLSearchParams(qstr);
     const shopid = urlParams.get('shopid');
 
     $("#goto").click(function () {
+        var date = new Date($("#date").val());
+        var endDate = new Date();
+        endDate.setDate(endDate.getDate() + 6);
         if ($("#date").val() == 0 || $("#people").val() == 0) {
             alert("put date and people");
-        } else {
+        }else if (date > new Date($.now()) && date < endDate) {         
             var url = "/table/index?shopid=" + shopid + "&date=" + $("#date").val() + "&people=" + $("#people").val();
             window.location.href = url;
+        }else
+        {
+             alert("you can only make a reservation from now up to six days"); 
         }
-
         });
 
 </script>

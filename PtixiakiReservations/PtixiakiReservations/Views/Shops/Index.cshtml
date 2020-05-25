@@ -5,11 +5,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <div class="row">
         <div class="card-deck ">
             @foreach (var item in Model)
@@ -32,11 +28,7 @@
 
                             @Html.DisplayFor(modelItem => item.Phone)
 
-                            @Html.DisplayFor(modelItem => item.thesis)
-
-
                             @Html.DisplayFor(modelItem => item.rating)
-
 
                             @Html.DisplayFor(modelItem => item.TimeOpen)
 

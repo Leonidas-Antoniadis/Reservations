@@ -29,42 +29,52 @@ namespace PtixiakiReservations.Controllers
         }
 
         // GET: Reservations        
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(bool flag)
         {
-            var applicationDbContext = _context.Reservations.Include(r => r.ApplicationUser).Include(r => r.table).Where(f => f.ApplicationUser.Id == userManager.GetUserId(HttpContext.User));
-
+            List<Reservations> res = new List<Reservations>();
+            if(flag == true)
+            {
+                res = _context.Reservations.Include(r => r.ApplicationUser).Include(r => r.table).Include(r => r.table.shop).Where(r => r.table.shop.UserId == userManager.GetUserId(HttpContext.User)).OrderBy(r => r.date).ToList();
+                
+                return View(res);
+            }
+            
             string id = userManager.GetUserId(HttpContext.User);
             var user = await userManager.FindByIdAsync(id);          
             var tmp1 = await userManager.GetRolesAsync(user);
-
+            
             if (tmp1.Contains("Shop"))
             {
-                applicationDbContext = _context.Reservations.Include(r => r.ApplicationUser).Include(r => r.table).Where(f => f.table.shop.UserId == userManager.GetUserId(HttpContext.User));
+                DateTime date = DateTime.Now;
+                TimeSpan span = TimeSpan.FromHours(12);
+                TimeSpan span2 = TimeSpan.FromHours(-12);
+                res =  _context.Reservations.Include(r => r.ApplicationUser).Include(r => r.table).Include(r => r.table.shop).Where(r => r.table.shop.UserId == userManager.GetUserId(HttpContext.User)).OrderBy(r => r.date).ToList();
+                res = res.Where(res => res.date.Subtract((DateTime)date) <= span && res.date.Subtract((DateTime)date) >= span2).ToList();
+                
+                return View(res);
             }
-            return View(applicationDbContext);
+
+            res = _context.Reservations.Include(r => r.ApplicationUser).Include(r => r.table).Where(f => f.ApplicationUser.Id == userManager.GetUserId(HttpContext.User)).OrderBy(r => r.date).ToList();
+            return  View(res);
         }
-        public JsonResult isFree(int? shopid, DateTime? date,int? people)
+        
+            public  JsonResult isFree(int? shopid, DateTime? date,int? people)
         {
             var tables = _context.Table.Where(s => s.shopID == shopid).ToList();
-
-            List<Reservations> resTable = new List<Reservations>();
+         
             TimeSpan span = TimeSpan.FromHours(2);
             TimeSpan span2 = TimeSpan.FromHours(-2);
-            var reservations = _context.Reservations.ToList();
-            reservations= reservations.Where(res => res.date.Subtract((DateTime)date) <= span && res.date.Subtract((DateTime)date) >= span2).ToList();
-            if (reservations != null)
+            DateTime dateTime = DateTime.Now;
+            var reservations =  _context.Reservations.Include(r => r.table).Include(r => r.table.shop).Where(r => r.table.shop.ID == shopid).ToList();
+            if(dateTime.Subtract((DateTime)date) <= TimeSpan.FromHours(4))
             {
-                foreach (var table in tables)
-                {
-                    var tmp = reservations.FirstOrDefault(res => res.tableId == table.ID);
-                    if (tmp != null)
-                    {
-                        resTable.Add(tmp);
-                    }
-                }
-            }          
-
-            return Json(resTable);
+                reservations = reservations.Where(res => res.date.Subtract((DateTime)date) <= span && res.date.Subtract((DateTime)date) >= span2 || res.table.Available == false).ToList();
+            }
+            else
+            {
+                reservations = reservations.Where(res => res.date.Subtract((DateTime)date) <= span && res.date.Subtract((DateTime)date) >= span2).ToList();
+            }
+          return  Json(reservations);
         }    
         public async Task<IActionResult> Details(int? id)
         {

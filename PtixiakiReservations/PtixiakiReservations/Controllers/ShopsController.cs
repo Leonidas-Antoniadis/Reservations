@@ -21,7 +21,6 @@ namespace PtixiakiReservations.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-       
         private readonly UserManager<ApplicationUser> userManager;
         private readonly RoleManager<ApplicationRole> roleManager;
 
@@ -76,6 +75,14 @@ namespace PtixiakiReservations.Controllers
         // GET: Shops/Create
         public IActionResult Create()
         {
+            string id = userManager.GetUserId(HttpContext.User);
+            var tmp = _context.Shops.Where(s => s.UserId == id).ToList();
+
+            if (tmp.Count != 0)
+            {
+                return NotFound();
+            }
+
             return View();
         }
         
@@ -96,19 +103,7 @@ namespace PtixiakiReservations.Controllers
                     string filePath = Path.Combine(uploadsFolder, uniqueFileName);
                     model.Photo.CopyTo(new FileStream(filePath, FileMode.Create));
                 }
-
-                IdentityResult  result= null;
-                var role = await roleManager.FindByIdAsync("3");
-
-               string id = userManager.GetUserId(HttpContext.User);
-                var user = await userManager.FindByIdAsync(id);  
-                
-               
-                result = await userManager.AddToRoleAsync(user, role.Name);
-                if (!result.Succeeded)
-                {
-                   // return View("~/Views/Home/Index.cshtml");
-                }                           
+                       
                  Shops newshop = new Shops
                 {
                     Name = model.Name,
@@ -155,7 +150,7 @@ namespace PtixiakiReservations.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Address,City,PostalCode,Phone,UserId,thesis,rating,TimeOpen,imgUrl")] Shops shops)
+        public async Task<IActionResult> Edit(int id,String Name, String Address, String City, String PostalCode,String Phone, String TimeOpen, String imgUrl, Shops shops)
         {
             if (id != shops.ID)
             {
@@ -164,8 +159,25 @@ namespace PtixiakiReservations.Controllers
 
             if (ModelState.IsValid)
             {
+                string tmpUrl;
                 try
                 {
+                    if (imgUrl == null)
+                    {
+                        tmpUrl = _context.Shops.SingleOrDefault(s => s.ID == id).imgUrl;
+                    }
+                    shops = new Shops
+                    {
+                        ID=id,
+                        Name = Name,
+                        Address =Address,
+                        City = City,
+                        PostalCode = PostalCode,
+                        Phone = Phone,
+                        UserId=userManager.GetUserId(HttpContext.User),
+                        TimeOpen = TimeOpen,
+                        imgUrl = imgUrl
+                    };
                     _context.Update(shops);
                     await _context.SaveChangesAsync();
                 }

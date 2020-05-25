@@ -14,6 +14,8 @@ namespace PtixiakiReservations.Models
         public decimal y { get; set; }
         public int people { get; set; }      
         public string Name { get; set; }
+
+        public bool Available { get; set; }
         public int shopID { get; set; }
         [ForeignKey("shopID")]
         public Shops shop { get; set; }

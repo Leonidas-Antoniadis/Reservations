@@ -12,7 +12,7 @@ using PtixiakiReservations.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using PtixiakiReservations.Models;
@@ -34,7 +34,7 @@ namespace PtixiakiReservations
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-
+            services.AddSignalR();
             services.AddIdentity<ApplicationUser, ApplicationRole>(
                  options => options.Stores.MaxLengthForKeys = 128)
                  .AddEntityFrameworkStores<ApplicationDbContext>()

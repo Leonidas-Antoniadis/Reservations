@@ -100,7 +100,8 @@ namespace PtixiakiReservations.Controllers
                         people = int.Parse(t.text),
                         x = t.left,
                         y = t.top,
-                        shopID = shop.ID
+                        shopID = shop.ID,
+                        Available=true
                         
                     };
                     _context.Add(table);
@@ -168,6 +169,36 @@ namespace PtixiakiReservations.Controllers
             ViewData["shopID"] = new SelectList(_context.Shops, "ID", "ID", table.shopID);
             return View(table);
         }
+        public async Task<IActionResult> ChangeAvailable(int ID, bool Flag)
+        {
+
+            Table table = _context.Table.FirstOrDefault(t => t.ID == ID);
+            if (table != null)
+            {
+                table.Available = Flag;
+                if (ModelState.IsValid)
+                {
+                    try
+                    {
+                        _context.Update(table);
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!TableExists(table.ID))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }                  
+                }             
+            }
+            return RedirectToAction("ListOfMytables","Table");
+        }
+
 
         // GET: Table/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -194,9 +225,15 @@ namespace PtixiakiReservations.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var table = await _context.Table.FindAsync(id);
+            var test = _context.Reservations.Where(r => r.tableId == table.ID).ToList();
+               foreach(var r in test)
+            {
+                _context.Reservations.Remove(r);
+            }
             _context.Table.Remove(table);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            return RedirectToAction(nameof(ListOfMytables));
         }
 
         private bool TableExists(int id)

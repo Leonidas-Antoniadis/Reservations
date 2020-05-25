@@ -97,11 +97,6 @@ namespace PtixiakiReservations.Areas.Identity.Pages.Account.Manage
                 var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, Input.PhoneNumber);               
                 user.FirstName = Input.FirstName;
                 user.LastName = Input.LastName;               
-                user.UserName = Input.FirstName + "" + Input.LastName;
-                user.NormalizedUserName = user.Email;
-
-
-
             }
             
             await _context.SaveChangesAsync();

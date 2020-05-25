@@ -13,6 +13,10 @@ namespace PtixiakiReservations.Models
 
         public String LastName { get; set; }
 
-        public String Tipos { get; set; }
+
+        public static implicit operator ApplicationUser(Task<ApplicationUser> v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -1,0 +1,40 @@
+﻿
+ <div class="modal-header">
+
+ </div>
+ <div class="modal-body">
+     <div class="row">
+         <div class="col-md-4">
+             <div class="form-group">
+                 <b>Name:</b> <input id="Name" />
+             </div>
+             <div class="form-group">
+                 <input id="Date" value='+ date.format() +' type="hidden" />
+                 <b>Start Time:</b> <input id="StartTime" type="time" />
+                 <div class="form-group">
+                     <b>End Time:</b> <input id="EndTime" type="time" />
+                     <div class="form-group">
+                         <b>Event Type:</b> <select asp-items="@(new SelectList(@ViewBag.EventTypes,"Id","Name"))"> </select>
+                         <div class="form-group">
+                             <b>Repeat Time:</b><select id="days">
+                                 <option value="FM">For a Month</option>
+
+                                 <option value="FW">For a Week</option>
+
+                                 <option value="OTD">Only This Day</option>
+                             </select>
+                         </div>
+                          <div class="form-group">
+
+                             <input type="submit" value="Create" id="Create" class="btn btn-primary" />
+                         </div>
+
+                     </div>
+                 </div>
+
+             </div>
+         </div>
+     </div>
+ </div>
+   <div class="modal-footer">
+   </div>

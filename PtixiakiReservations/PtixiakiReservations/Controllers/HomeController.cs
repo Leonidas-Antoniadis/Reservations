@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using PtixiakiReservations.Models;
 
@@ -15,6 +16,7 @@ namespace PtixiakiReservations.Controllers
     public class HomeController : Controller
     {
         private readonly UserManager<ApplicationUser> userManager;
+      
 
         private readonly ILogger<HomeController> _logger;
 
@@ -22,10 +24,10 @@ namespace PtixiakiReservations.Controllers
         {
             _logger = logger;
             userManager = _userManager;
-    }
-
+        }
         public IActionResult Index()
-        {          
+        {
+
             return View();
         }
 
